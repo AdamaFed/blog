@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <title>Login</title>
+</head>
+<body class="bg-slate-100">
+
+<div class="hero min-h-screen flex items-center justify-center">
+  <div class="hero-content text-center">
+    <div class="max-w-md mx-auto bg-white p-8 rounded-lg shadow-md">
+      <h1 class="text-5xl font-bold mb-4 text-red-400">Thank you for signing up</h1>
+      <p class="py-6">Get ready for a delightful journey through the world of flavors and recipes. Please note that you'll need to log in to access the full content.</p>
+      <a th:href="@{/login}" class="btn btn-primary inline-block px-6 py-3 rounded-md text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:border-blue-700 focus:shadow-outline-blue active:bg-blue-800">Login Now</a>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

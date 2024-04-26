@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>User List</title>
+  <script th:src="@{/js/user-list-filter.js}"></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="font-sans">
+<nav class="bg-gray-100">
+  <div class="max-w-6xl mx-auto px-4">
+    <div class="flex justify-between">
+      <div class="flex space-x-4">
+        <!-- logo -->
+        <div>
+          <a
+                  href="#"
+                  class="flex items-center py-5 px-2 text-gray-700 hover:text-gray-900"
+          >
+            <img th:src="@{/css/images/homelogo.svg}" alt="" class="h-35 w-20">
+
+            <!--            <span class="font-bold">Food Story</span>-->
+          </a>
+        </div>
+
+        <!-- primary nav -->
+        <div class="hidden md:flex items-center space-x-1">
+          <a href="/blog/home" class="py-5 px-3 text-gray-700 hover:text-gray-900"
+          >Home</a
+          >
+          <a href="/blog/showAllPosts" class="py-5 px-3 text-gray-700 hover:text-gray-900"
+          >All posts</a
+          >
+        </div>
+      </div>
+
+      <!-- secondary nav -->
+      <div class="hidden md:flex items-center space-x-1 mr-2">
+        <th:block th:if="${sessionUser == null}">
+          <a th:href="@{/login}" href="" class="py-5 px-3">Login</a>
+          <a th:href="@{/register}" href="" class="py-2 px-3 bg-red-400 hover:bg-yellow-300 text-yellow-900 hover:text-yellow-800 rounded transition duration-300">Signup</a>
+        </th:block>
+        <th:block th:if="${sessionUser != null}">
+          <form th:action="@{/logout}" method="post">
+            <button type="submit" class="py-5 px-3">Logout</button>
+          </form>
+          <th:block th:if="${sessionUser.role == 'ADMIN'}">
+            <a th:href="@{/admin/users}" class="py-5 px-3">Manage User</a>
+          </th:block>
+        </th:block>
+
+
+
+      </div>
+
+      <!-- mobile button -->
+      <div class="md:hidden flex items-center">
+        <button class="mobile-menu-button">
+          <svg
+                  class="w-6 h-6"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+          >
+            <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M4 6h16M4 12h16M4 18h16"
+            />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- mobile menu -->
+  <div class="mobile-menu hidden md:hidden">
+    <a th:href="@{/home}" class="block py-2 px-4 text-sm hover:bg-gray-200"
+    >Home</a
+    >
+    <a th:href="@{/showAllPosts}" class="block py-2 px-4 text-sm hover:bg-gray-200"
+    >All posts</a
+    >
+
+
+    <th:block th:if="${sessionUser == null}">
+      <a th:href="@{/login}" href="#" class="block py-2 px-4 text-sm hover:bg-gray-200">Login</a>
+      <a th:href="@{/register}" href="#" class="block py-2 px-4 text-sm hover:bg-gray-200">Signup</a>
+    </th:block>
+    <th:block th:if="${sessionUser != null}">
+      <form th:action="@{/logout}" method="post">
+        <button type="submit" class="block py-2 px-4 text-sm hover:bg-gray-200">Logout</button>
+      </form>
+      <th:block th:if="${sessionUser.role == 'ADMIN'}">
+        <a th:href="@{/admin/users}" class="py-5 px-3">Manage User</a>
+      </th:block>
+    </th:block>
+  </div>
+</nav>
+
+
+<div class="container mx-auto my-8">
+
+  <h1 class="text-3xl font-semibold text-center mb-8">User List</h1>
+
+  <div class="flex items-center justify-center mb-20">
+    <label for="search" class="mr-2"></label>
+    <input type="text" id="search" oninput="filterUsers()" placeholder="Search user" class="border py-2 px-5 rounded-md">
+  </div>
+
+  <table class="min-w-full bg-white border border-gray-300 rounded-md overflow-hidden">
+    <thead class="bg-gray-100">
+    <tr>
+      <th class="py-2 px-4 border-b text-center">Username</th>
+      <th class="py-2 px-4 border-b text-center">Email</th>
+      <th class="py-2 px-4 border-b text-center">Role</th>
+      <th class="py-2 px-4 border-b text-center">Action</th>
+    </tr>
+    </thead>
+    <tbody id="userTableBody">
+    <tr th:each="user : ${users}" class="border-b">
+      <td th:text="${user.username}" class="py-2 px-4 text-center"></td>
+      <td th:text="${user.email}" class="py-2 px-4 text-center"></td>
+      <td th:text="${user.role}" class="py-2 px-4 text-center"></td>
+      <td class="py-2 px-4 text-center">
+        <!-- Action buttons for promoting to admin -->
+        <form th:if="${user.role != 'ADMIN'}" method="POST" th:action="@{/admin/promote}">
+          <input type="hidden" name="username" th:value="${user.username}">
+          <button type="submit" class="bg-green-500 text-white py-1 px-2 rounded-md">Promote to Admin</button>
+        </form>
+
+        <!-- Action buttons for deleting user -->
+        <form th:if="${user.role == 'USER'}" method="POST" th:action="@{/admin/delete}">
+          <input type="hidden" name="username" th:value="${user.username}">
+          <button type="submit" class="bg-red-500 text-white py-1 px-2 rounded-md">Delete User</button>
+        </form>
+      </td>
+    </tr>
+    </tbody>
+
+  </table>
+
+</div>
+
+</body>
+</html>
